@@ -33,14 +33,11 @@ describe('actor routes', () => {
   });
 
   it('can get an actor by id', async() => {
-    const actor = prepare(await Actor.findOne().select({ name: true }));
+    const actor = prepare(await Actor.findOne().select({ name: true }).populate('films', { title: true, released: true }));
 
     return request(app)
       .get(`/api/v1/actors/${actor._id}`)
-      .then(res => expect(res.body).toEqual({
-        ...actor,
-      // films: []
-      }));
+      .then(res => expect(res.body).toEqual(actor));
   });
 
 });

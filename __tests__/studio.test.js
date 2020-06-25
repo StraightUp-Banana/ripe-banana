@@ -37,7 +37,7 @@ describe('my studio routes', () => {
       .then(res => expect(res.body).toEqual(studios));
   });
   it('gets a studio by id', async() => {
-    const studio = prepare(await Studio.findOne().select({ name: true, address: true }).populate('films', { title: true, released: true, studio: true }));
+    const studio = prepare(await Studio.findOne().select({ name: true, address: true }).populate('films', { title: true, released: true }));
 
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
