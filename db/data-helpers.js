@@ -19,7 +19,7 @@ beforeEach(() => {
 });
 
 beforeEach(() => {
-  return seed;
+  return seed();
 });
 
 let agent = request.agent(app);
