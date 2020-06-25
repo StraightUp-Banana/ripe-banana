@@ -6,9 +6,6 @@ const mongoose = require('mongoose');
 const connect = require('../lib/utils/connect');
 const seed = require('./seed');
 
-const request = require('supertest');
-const app = require('../lib/app');
-
 beforeAll(async() => {
   const uri = await mongod.getUri();
   return connect(uri);
@@ -19,12 +16,7 @@ beforeEach(() => {
 });
 
 beforeEach(() => {
-  return seed;
-});
-
-let agent = request.agent(app);
-beforeEach(async() => {
-  // agent
+  return seed();
 });
 
 afterAll(async() => {
@@ -32,6 +24,14 @@ afterAll(async() => {
   return mongod.stop();
 });
 
+const prepareOne = model => JSON.parse(JSON.stringify(model));
+const prepareMany = models => models.map(prepareOne);
+
+const prepare = model => {
+  if(Array.isArray(model)) return prepareMany(model);
+  return prepareOne(model);
+};
+
 module.exports = {
-  agent
+  prepare
 };
