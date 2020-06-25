@@ -43,7 +43,7 @@ describe('my studio routes', () => {
       .get(`/api/v1/studios/${studio._id}`)
       .then(res => expect(res.body).toEqual({
         ...studio,
-        films: []
+        // films: []
       }));
   });
 });
