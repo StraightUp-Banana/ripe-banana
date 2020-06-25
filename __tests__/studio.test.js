@@ -5,8 +5,6 @@ const app = require('../lib/app');
 
 describe('my studio routes', () => {
   it('can add a studio', () => {
-    const studio = Studio.findOne();
-
     return request(app)
       .post('/api/v1/studios')
       .send({ 
