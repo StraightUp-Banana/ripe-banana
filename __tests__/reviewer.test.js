@@ -20,13 +20,13 @@ describe('reviewer routes', () => {
       }));
   });
 
-  // it('can get all actors', async() => {
-  //   const actors = prepare(await Actor.find().select({ name: true }));
+  it('can get all reviewers', async() => {
+    const reviewers = prepare(await Reviewer.find().select({ name: true, company: true }));
 
-  //   return request(app)
-  //     .get('/api/v1/actors')
-  //     .then(res => expect(res.body).toEqual(actors));
-  // });
+    return request(app)
+      .get('/api/v1/reviewers')
+      .then(res => expect(res.body).toEqual(reviewers));
+  });
 
   // it('can get an actor by id', async() => {
   //   const actor = prepare(await Actor.findOne().select({ name: true }));
