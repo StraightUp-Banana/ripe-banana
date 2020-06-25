@@ -37,13 +37,10 @@ describe('my studio routes', () => {
       .then(res => expect(res.body).toEqual(studios));
   });
   it('gets a studio by id', async() => {
-    const studio = prepare(await Studio.findOne().select({ name: true, address: true }));
+    const studio = prepare(await Studio.findOne().select({ name: true, address: true }).populate('films', { title: true, released: true }));
 
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
-      .then(res => expect(res.body).toEqual({
-        ...studio,
-        // films: []
-      }));
+      .then(res => expect(res.body).toEqual(studio));
   });
 });
