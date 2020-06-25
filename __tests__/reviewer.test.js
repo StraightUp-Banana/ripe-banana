@@ -28,15 +28,42 @@ describe('reviewer routes', () => {
       .then(res => expect(res.body).toEqual(reviewers));
   });
 
-  // it('can get an actor by id', async() => {
-  //   const actor = prepare(await Actor.findOne().select({ name: true }));
+  it('can get a reviewer by id', async() => {
+    const reviewer = prepare(await Reviewer.findOne().select({ name: true, company: true }));
 
-  //   return request(app)
-  //     .get(`/api/v1/actors/${actor._id}`)
-  //     .then(res => expect(res.body).toEqual({
-  //       ...actor,
-  //     // films: []
-  //     }));
-  // });
+    return request(app)
+      .get(`/api/v1/reviewers/${reviewer._id}`)
+      .then(res => expect(res.body).toEqual({
+        ...reviewer,
+      // reviews: []
+      }));
+  });
+
+  it('can update reviewers', async() => {
+    const reviewer = prepare(await Reviewer.findOne().select({ name: true, company: true }));
+    return request(app)
+      .patch(`/api/v1/reviewers/${reviewer._id}`)
+      .send({
+        company: 'my new company'
+      })
+      .then(res => expect(res.body).toEqual({
+        __v: 0,
+        _id: expect.anything(),
+        name: reviewer.name,
+        company: 'my new company'
+      // reviews: []
+      }));
+  });
+
+  it('can delete reviewers', async() => {
+    const reviewer = prepare(await Reviewer.findOne().select({ name: true, company: true }));
+    return request(app)
+      .delete(`/api/v1/reviewers/${reviewer._id}`)
+      .then(res => expect(res.body).toEqual({
+        __v: 0,
+        ...reviewer,
+      // reviews: []
+      }));
+  });
 
 });
