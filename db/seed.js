@@ -3,6 +3,7 @@ const Studio = require('../lib/models/Studio');
 const Actor = require('../lib/models/Actor');
 const Reviewer = require('../lib/models/Reviewer');
 const Film = require('../lib/models/Film');
+const Review = require('../lib/models/Review');
 
 module.exports = async({ studios = 10, actors = 200, reviewers = 25, films = 50, reviews = 250 } = {}) => {
   const createdStudios = await Studio.create([...Array(studios)].map(() => ({
@@ -21,12 +22,12 @@ module.exports = async({ studios = 10, actors = 200, reviewers = 25, films = 50,
     pob: chance.country()
   })));
 
-  await Reviewer.create([...Array(reviewers)].map(() => ({
+  const createdReviewers = await Reviewer.create([...Array(reviewers)].map(() => ({
     name: chance.name(),
     company: chance.company()
   })));
 
-  await Film.create([...Array(films)].map(() => ({
+  const createdFilms = await Film.create([...Array(films)].map(() => ({
     title: chance.suffix() + ' ' + chance.last({ nationality: 'en' }),
     studio: chance.pickone(createdStudios)._id,
     released: chance.year({ min: 1950, max: 2020 }),
@@ -35,6 +36,13 @@ module.exports = async({ studios = 10, actors = 200, reviewers = 25, films = 50,
         actor: _id,
         role: chance.profession({ rank: true })
       }))
+  })));
+
+  await Review.create([...Array(reviews)].map(() => ({
+    rating: chance.integer({ min: 1, max: 5 }),
+    reviewer: chance.pickone(createdReviewers)._id,
+    review: chance.sentence(),
+    film: chance.pickone(createdFilms)._id
   })));
 
 };
