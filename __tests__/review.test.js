@@ -31,7 +31,11 @@ describe('review routes', () => {
   });
 
   it('can get the top 100 reviews', async() => {
-    const reviews = prepare(await Review.find().populate('film', { _id: true, title: true }).sort({ rating: -1 }).limit(100));
+    const reviews = prepare(await Review.find()
+      .populate('reviewer', { _id: true, name: true })
+      .populate('film', { _id: true, title: true })
+      .sort({ rating: -1 })
+      .limit(100));
   
     return request(app)
       .get('/api/v1/reviews')

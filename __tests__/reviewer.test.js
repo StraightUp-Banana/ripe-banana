@@ -55,6 +55,20 @@ describe('reviewer routes', () => {
       }));
   });
 
+  it('can throws an error when trying to delete reviewer with reviews', async() => {
+    const reviewer = await Reviewer.create({
+      name: 'The Reviewer',
+      company: 'Best review company'
+    });
+    return request(app)
+      .delete(`/api/v1/reviewers/${reviewer._id}`)
+      .then(res => expect(res.body).toEqual({
+        message: 'Reviewer has reviews',
+        status: 500
+      }));
+  });
+
+
   it('can delete reviewers', async() => {
     const reviewer = prepare(await Reviewer.findOne().select({ name: true, company: true }));
     return request(app)
