@@ -1,6 +1,8 @@
 require('../db/data-helpers');
 const { prepare } = require('../db/data-helpers');
 const Reviewer = require('../lib/models/Reviewer');
+const Review = require('../lib/models/Review');
+const Film = require('../lib/models/Film');
 const request = require('supertest');
 const app = require('../lib/app');
 
@@ -34,8 +36,9 @@ describe('reviewer routes', () => {
     return request(app)
       .get(`/api/v1/reviewers/${reviewer._id}`)
       .then(res => expect(res.body).toEqual({
+        __v: 0,
         ...reviewer,
-      // reviews: []
+        reviews: expect.any(Array)
       }));
   });
 
@@ -51,15 +54,24 @@ describe('reviewer routes', () => {
         _id: expect.anything(),
         name: reviewer.name,
         company: 'my new company'
-      // reviews: []
       }));
   });
 
-  it('can throws an error when trying to delete reviewer with reviews', async() => {
+  it('can throw an error when trying to delete reviewer with reviews', async() => {
+    const film = prepare(await Film.findOne().populate('studio', { name: true }).populate('cast.actor', { name: true }));
+
     const reviewer = await Reviewer.create({
       name: 'The Reviewer',
       company: 'Best review company'
     });
+
+    await Review.create({
+      rating: 2,
+      reviewer: reviewer._id,
+      review: 'This movie was ok',
+      film: film._id
+    });
+
     return request(app)
       .delete(`/api/v1/reviewers/${reviewer._id}`)
       .then(res => expect(res.body).toEqual({
@@ -70,14 +82,13 @@ describe('reviewer routes', () => {
 
 
   it('can delete reviewers', async() => {
-    const reviewer = prepare(await Reviewer.findOne().select({ name: true, company: true }));
+    const reviewer = prepare(await Reviewer.create({
+      name: 'The Reviewer',
+      company: 'Best review company'
+    }));
+  
     return request(app)
       .delete(`/api/v1/reviewers/${reviewer._id}`)
-      .then(res => expect(res.body).toEqual({
-        __v: 0,
-        ...reviewer,
-      // reviews: []
-      }));
+      .then(res => expect(res.body).toEqual(reviewer));
   });
-
 });

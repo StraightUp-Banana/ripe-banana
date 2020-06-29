@@ -49,11 +49,28 @@ describe('the film routes', () => {
       .then(res => expect(res.body).toEqual(films));
   });
   it('can get a film by id with studio and cast', async() => {
-    const film = prepare(await Film.findOne().populate('studio', { name: true }).populate('cast.actor', { name: true }));
+    const film = prepare(await Film.findOne()
+      .populate('studio', { name: true })
+      .populate('cast.actor', { name: true })
+      .populate({
+        path: 'reviews',
+        select: {
+          rating: true,
+          review: true,
+          reviewer: true
+        },
+        populate: {
+          path: 'reviewer',
+          select: {
+            name: true
+          }
+        }
+      }));
 
     return request(app)
       .get(`/api/v1/films/${film._id}`)
-      .then(res => expect(res.body).toEqual(film));
-    // todo: add reviews
+      .then(res => expect(res.body).toEqual(
+        film
+      ));
   });
 });

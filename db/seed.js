@@ -41,7 +41,7 @@ module.exports = async({ studios = 10, actors = 200, reviewers = 25, films = 50,
   await Review.create([...Array(reviews)].map(() => ({
     rating: chance.integer({ min: 1, max: 5 }),
     reviewer: chance.pickone(createdReviewers)._id,
-    review: chance.sentence(),
+    review: chance.sentence({ words: 5 }),
     film: chance.pickone(createdFilms)._id
   })));
 
